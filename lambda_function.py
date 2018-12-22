@@ -40,8 +40,6 @@ def get_welcome_response():
     speech_output = "Welcome to the Alexa Skills Google repeater. " \
                     "Tell me what you want to say to Google, " \
                     "I'll ask for you"
-    # If the user either does not reply to the welcome message or says something
-    # that is not understood, they will be prompted again with this text.
     reprompt_text = "Please tell me what I should say to Google, "
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
@@ -55,28 +53,30 @@ def handle_session_end_request():
     return build_response({}, build_speechlet_response(
         card_title, speech_output, None, should_end_session))
 
+
 def ask_to_google(intent, session, message, slots):
     if intent['name'] == "TurnOn" or intent['name'] == "TurnOff":
-        try: 
+        try:
             slot = slots['light']['value']
         except Exception as e:
             slot = "all the lights"
-    
+
     if intent['name'] == "iAm":
         slot = slots['action']['value']
-        
+
     card_title = intent['name']
     session_attributes = {}
     should_end_session = True
     speech_output = "Ok Google, " + message + slot
     reprompt_text = "Please tell me what I should say to Google, "
-    
+
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
-    
+
 
 def on_session_started(session_started_request, session):
-    print("on_session_started requestId=" + session_started_request['requestId']
+    print("on_session_started requestId="
+          + session_started_request['requestId']
           + ", sessionId=" + session['sessionId'])
 
 
@@ -84,6 +84,7 @@ def on_launch(launch_request, session):
     print("on_launch requestId=" + launch_request['requestId'] +
           ", sessionId=" + session['sessionId'])
     return get_welcome_response()
+
 
 def fallback_response():
     print('fallback_response')
@@ -94,7 +95,7 @@ def fallback_response():
     should_end_session = False
     return build_response(session_attributes, build_speechlet_response(
         card_title, speech_output, reprompt_text, should_end_session))
-        
+
 
 def on_intent(intent_request, session, event, context):
     print("on_intent requestId=" + intent_request['requestId'] +
@@ -102,20 +103,20 @@ def on_intent(intent_request, session, event, context):
 
     intent = intent_request['intent']
     intent_name = intent_request['intent']['name']
-    
-    try: 
+
+    try:
         slots = event['request']['intent']['slots']
         print('slots: ' + str(slots))
     except Exception as e:
         # raise e
         print('No slots')
-    
+
     print('event: ' + str(event))
     print('intent_request: ' + str(intent_request))
     print('session: ' + str(session))
     print('intent: ' + str(intent))
     print('intent_name: ' + str(intent_name))
-    
+
     if intent_name == "iAm":
         return ask_to_google(intent, session, "I am", slots)
     elif intent_name == "TurnOn":
