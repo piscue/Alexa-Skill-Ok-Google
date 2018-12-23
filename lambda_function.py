@@ -127,7 +127,8 @@ def on_intent(intent_request, session, event, context):
         return ask_to_google(intent, session, " Turn off ", slots)
     elif intent_name == "AMAZON.HelpIntent":
         return get_welcome_response()
-    elif intent_name == "AMAZON.CancelIntent" or intent_name == "AMAZON.StopIntent":
+    elif intent_name == "AMAZON.CancelIntent" or \
+            intent_name == "AMAZON.StopIntent":
         return handle_session_end_request()
     elif intent_name == "AMAZON.FallbackIntent":
         print('if fallback')
